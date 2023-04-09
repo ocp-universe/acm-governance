@@ -1,0 +1,33 @@
+# AppSet: Bootstraping entire solution
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "as-sc-acm-capabilities"
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      elements:
+      - gitUrl: 'https://github.com/ocp-universe/acm-governance.git'
+        gitBranch: 'main'
+        gitSrcDir: 'gitops/subs-root'
+        argoAppName: 'sc-acm-sub-root'
+  template:
+    metadata:
+      name: '{{argoAppName}}'
+    spec:
+      project: 'default'
+      source:
+        repoURL: '{{gitUrl}}'
+        targetRevision: '{{gitBranch}}'
+        path: '{{gitSrcDir}}'
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        # Turning on selective sync option which will sync only out-of-sync resources
+        # reduce the pressure on the API server, helpful in case of many resources
+        - ApplyOutOfSyncOnly=true

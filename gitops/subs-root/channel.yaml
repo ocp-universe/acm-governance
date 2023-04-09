@@ -1,0 +1,16 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: medium
+  labels:
+    app: mcm-policy
+  name: mcm-policy-root-chan
+  namespace: demo-mcm-policies
+spec:
+  pathname: https://github.com/ocp-universe/acm-governance.git
+  type: GitHub
+  #secretRef:
+    # Secret with ssh key, in field sshKey
+    #name: github-multicluster-repo
